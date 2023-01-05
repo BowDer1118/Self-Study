@@ -1,0 +1,60 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.bowder</groupId>
+  <artifactId>Maven_Introduction</artifactId>
+  <version>1.0.0-RELEASE</version>
+  <!-- 指定maven編譯器的java版本(java1.8)-->
+  <properties>
+	  <maven.compiler.target>1.8</maven.compiler.target>
+	  <maven.compiler.source>1.8</maven.compiler.source>
+  </properties>
+  <!-- 加入依賴庫 -->
+  <dependencies>
+	 <!-- 資料庫依賴 -->
+	<dependency>
+	 <groupId>mysql</groupId>
+	  <artifactId>mysql-connector-java</artifactId>
+	  <version>5.1.47</version>
+	</dependency>
+	<!-- 漢字轉拼音依賴 -->
+	<dependency>
+	  <groupId>com.belerweb</groupId>
+	  <artifactId>pinyin4j</artifactId>
+	  <version>2.5.1</version>
+	</dependency>
+	<!-- Spring WebMVC框架-->
+	<dependency>
+	  <groupId>org.springframework</groupId>
+	  <artifactId>spring-webmvc</artifactId>
+	  <version>6.0.3</version>
+	</dependency>
+  </dependencies>
+  <!-- 打包工程 -->
+  <build>
+	<!-- 配置插件 -->
+	<plugins>
+		<!-- 指定打包的plugin -->
+		<plugin>
+			<!-- 使用Apache官方的打包插件:maven assembly plugin -->
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-assembly-plugin</artifactId>
+			<!-- 使用經典的2.5.5版本 -->
+			<version>2.5.5</version>
+			<!-- 描述打包時的細節-->
+			<configuration>
+				<archive>
+					<manifest>
+						<!-- 指定main函數的java檔案-->
+						<mainClass>com.bowder.maven.PinyinTestor</mainClass>
+					</manifest>
+				</archive>
+				<!-- 設定打包時的額外參數 -->
+				<descriptorRefs>
+					<!-- all in one , 在打包時，將所有引用的jar合併到輸出的jar中 -->
+					<descriptorRef>jar-with-dependencies</descriptorRef>
+				</descriptorRefs>
+			</configuration>
+		</plugin>
+	</plugins>  
+  </build>
+</project>

@@ -1,0 +1,11 @@
+{
+    "files.associations": {
+        "algorithm": "cpp",
+        "xstddef": "cpp",
+        "concepts": "cpp",
+        "xstring": "cpp",
+        "xtr1common": "cpp",
+        "xutility": "cpp",
+        "vector": "cpp"
+    }
+}

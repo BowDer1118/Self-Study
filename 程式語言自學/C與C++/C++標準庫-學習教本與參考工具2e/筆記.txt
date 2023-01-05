@@ -1,0 +1,122 @@
+第六章-標準模板庫
+    6.1 組件(STL Components):關鍵的三個組件
+        1.容器(Container):用來管理 物件的群集
+        2.迭代器(Iterator):
+            用來訪問群集中的元素，用法類似於pointer，可以視作一種smart pointer。
+            透過operator++前往下一個元素，透過operator*來獲取存取當前物件。
+        3.演算法(Algorithm):用來處理群集中的元素，例如:搜尋、排序、修改、使用
+        
+        STL 提供更加泛型的組件，可以藉由 適配器(adapter)與函式物件(function object)來規範或製作 演算法
+    6.2 容器(Container):分成三大類
+        1.序列式容器(Sequence containers):每個元素有確切的位置，取決於插入的時間或地點，與元素值無關。
+            通常用 array 或 linked-list 實作
+            STL提供以下template class
+            1.vector:定義在<vector>中，使用dynamic-array管理
+                優點:隨機訪問快、允許下標存取、後方插入快
+                缺點:非後方的插入或刪除 費時
+            2.deque:定義在<deque>中，全名為double-ended queue 同樣使用dynamic-array管理
+                優點:隨機訪問快、允許下標存取、前方與後方插入快
+                缺點:非前方與非後方 插入或刪除 費時
+            3.list:有兩種定義 <list> <forward_list> 使用doubly linked list實作
+                list的功能強大於forward_list
+                優點:在任意位置插入或刪除非常快
+                缺點:不提供隨機訪問
+        2.關聯式容器(Associative containers):每個元素都已被排序，是透過元素的 key or value 或透過特定的演算法來排序。
+            通常用 binary tree 實作
+            關聯式容器會自動排序加入的元素，預設是透過operator<進行比較
+            不同關聯性容器差異在:元素的種類與處理重複元素時的方法
+            STL提供以下template class
+            1.set與multiset:定義在<set>中
+                元素依照value值 排序
+                set不允許相同的元素出現
+                multiset允許相同的元素出現(重複元素會排在已出現過的後方)
+            2.map與multimap:定義在<map>中
+                每個元素都是key-value的pair物件組成 而pair物件具體為 pair<const key,value>
+                [注意]pair的key是帶const的，代表不能修改key的值(因為map是依照key自動排序)
+                依照key的物件 排序
+                map不允許相同key值的物件存在
+                multimap允許同key值的物件存在
+                [補充]multimap常被用來 實作 "字典(dictionary)"
+        3.不定序容器(Unordered containers):只在意 特定元素是否存在 在於群集中，而不在乎 位置與排序
+            通常 hash table 實作
+            優點:搜尋特定的物件 速度可能比關聯式容器更快，取決於hash function的設計
+            STL提供以下template class
+            1.unordered set 與 unordered multiset 定義在<unordered_set>
+            2.unordered map 與 unordered multimap 定義在<unordered_map>
+        [思考]關聯式容器因為會自動完成排序過程，因此在 搜尋 動作時 時間複雜度是較低的(對數級別)，可以直接進行binary search
+        4.容器適配器(adapter)
+            1.Stack:使用FILO
+            2.Queue:使用FIFO
+            3.Proiority Queue:透過優先權排序，預設是operator<使得優先權最大的元素在最前面
+    6.3 迭代器(Iterator):用來訪問STL容器中的元素 的物件 可以看為一個smart pointer
+        1.語法
+            containers<Type>::iterator種類 it;
+        2.支援的操作
+            1.operator* 用來獲取當前元素
+            2.operator++ 移動到下一個物件位置
+            3.operator== operator!= 判斷是否指向同一個位置
+            4.operator= 用來指派iterator指向的位置
+            5.如果物件有成員屬性 可以透過 it->成員 方式存取 (跟指標存取方式一樣)
+        3.初始化迭代器
+            起始可以使用container.begin()獲取 第一個元素的記憶體位置
+            終點可以使用container.end() 獲取 最後一個元素的下一個記憶體位置
+            容器的範圍存在於[begin(),end()) 左閉右開的範圍
+        4.判斷是否越界
+            1.while(begin()!=end()) ---> 還有元素
+            2.if(begin()==end()) ---> 容器為空 沒有元素
+        5.迭代器屬性
+            1.containers<Type>::iterator it; 提供 讀取與寫入 功能
+                可以使用containers.begin()與containers.end()取得容器元素位置
+            2.containers<Type>::const_iterator cit; 只提供 讀取 功能
+                可以使用containers.cbegin()與containers.cend()取得容器元素位置
+        [小技巧]++it與it++效能問題
+            for(auto it=containers.begin();it!=end();++it){...}
+            效能會比
+            for(auto it=containers.begin();it!=end();it++){...}
+            更好 因為it++要複製一份it的複本 才執行++
+            如果沒有特殊需求 使用 ++it會比it++ 效能更好
+        6.迭代器種類
+            1.Forward Iterator 前向迭代器:只提供向前迭代的功能 ---> operator++
+            2.Bidirectional Iterator 雙向迭代器: 提供 向前與向後 迭代的功能 ---> operator-- operator++
+            3.Random Access Iterator 隨機存取迭代器:提供 隨機存取功能 能夠計算 迭代器之間的距離
+    6.4 演算法(Algorithm)
+        1.演算法是一套全域型的函式 時作出一個就能套用到所有容器中
+        2.區間:所有算法都是 左閉右開區間 即表示成: [begin,end) 或 [begin,end[
+        3.處理多重區間問題:如果某個算法 支援處理多個區間 則我們必須確保 第二個區間要處理的元素數量>=第一個區間要處理的元素數量
+        4.迭代器的適配器(Iterator Adapter):用來實現特殊功能的迭代器
+            1.Insert Iterator 安插型迭代器:負責提供 特定容器的 插入元素 功能 如果插入元素的數量 大於容器所能容納的數量 則會促使 容器擴大容量
+                1.back_inserter(容器物件):使用push_back()方法 將元素插入到容器中 (前提是容器支援push_back())
+                2.front_inserter(容器物件):使用push_front()方法 將元素插入到容器中 (前提是容器支援push_front())
+                3.inserter(容器物件,容器位置):使用insert()方法 從容器位置 將插入元素插入到容器中
+            2.Stream Iterator 串流型迭代器:用來處理串流 類似Java的IOStream概念
+                [實例]
+                //檔案在 stl/ioiter1.cpp
+                #include <algorithm>
+                #include <iterator>
+                #include <iostream>
+
+                vector<string> v;
+                //使用cin物件 建構istream_iterator<string> 用以讀取cin流中string類型的資料
+                //使用istream_iterator()的default constructor產生一個串流結束符號(end-of-file) 停止串流
+                //並配合back_iterator(容器) 將讀取到的資料 放到容器中
+                copy(istream_iterator<string>(cin),istream_iterator(),back_inserter(v));
+                //使用ostream_iterator<string>(物件,"字串") 使用cout物件 將vector中的元素 逐個輸出到cout流 每個元素後方接上一個"\n"
+                unique_copy(v.begin(),v.end(),ostream_iterator<string>(cout,"\n"));
+            3.Reverse Iterator 逆向迭代器
+                containers<Type>::reverse_iterator 可以使用 rbegin() rend() 獲取反向的頭尾
+                containers<Type>::const_reverse_iterator 可以使用crbegin() crend() 獲取const型的iterator
+            4.Move iterator 搬移迭代器
+
+第七章-STL容器
+    7.1 容器的通用操作
+        1.全部容器都支援 初始列表(Initializer List)的功能
+            contType<Type> c= {e1,e2,e3....}; //使用初始列表 初始化容器
+        2.通用操作(一定支援的語法)
+            1.contType c;           //調用容器 Default Construtor 產生空的容器
+            2.c.empty();            //判斷是否為空
+            3.c.size();             //回傳容器中 有多少個元素
+            4.c={e1,e2,e3....};     //能使用初始列表初始化
+            5.c.begin();            //回傳指向第一個元素位置的iterator
+            6.c.cbegin();           //回傳指向第一個元素位置的const_iterator
+            7.c.end();              //回傳最後一個元素後一個位置的iterator
+            8.c.cend();             //回傳最後一個元素後一個位置的const_iterator
