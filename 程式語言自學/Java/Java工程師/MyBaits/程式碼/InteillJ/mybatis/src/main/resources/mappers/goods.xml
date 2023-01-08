@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--用來描述Goods類中的屬性與資料庫中t_goods Table的映射關係-->
+<!--
+    namespace存在的意義是因為mappers可能會有很多mapper.xml
+    其中每個mapper可能都會有相同的select id 因此要使用namespace做出唯一性
+
+    例如:可能有goods.xml category.xml 這兩個mapper
+    且都有selectAll這個id 所以我們需要有namespace做出區隔
+    讓mybatis知道，我們要調用哪個namespace的selectAll
+-->
+<mapper namespace="goods">
+    <!--
+        id:為SQL查詢語句取一個名稱(別名)，當呼叫此id就是呼叫該SQL查詢語句
+        resultType:代表查詢完畢後的資料要包裝成哪個類，例如:使用Goods類保存
+    -->
+    <select id="selectAll" resultType="com.imooc.mybatis.entity.Goods">
+        select * from t_goods order by goods_id desc limit 10
+    </select>
+
+    <!--傳參型查詢 透過指定parameterType的數據類型 並使用#{}來標示 調用時要置入的參數-->
+    <select id="selectById" parameterType="Integer" resultType="com.imooc.mybatis.entity.Goods">
+        select * from t_goods where goods_id=#{value}
+    </select>
+    <!--
+        傳入一個Map物件來傳入多個參數
+        其中 min max limt 為Map中的key值 調用時會自動獲取該key的value值填入
+        所以我們在寫SQL時要寫key而執行時會被替換成value
+    -->
+    <select id="selectByPriceRange" parameterType="java.util.Map" resultType="com.imooc.mybatis.entity.Goods">
+        select * from t_goods
+        where current_price between #{min} and #{max}
+        order by current_price
+        limit 0,#{limt}
+    </select>
+</mapper>

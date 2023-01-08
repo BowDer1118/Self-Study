@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="student">
+    <!--
+        id:為SQL查詢語句取一個名稱(別名)，當呼叫此id就是呼叫該SQL查詢語句
+        resultType:代表查詢完畢後的資料要包裝成哪個類，例如:使用Goods類保存
+    -->
+    <select id="selectAll" resultType="com.imooc.mybatis.entity.Student">
+        select * from t_student order by id
+    </select>
+</mapper>
