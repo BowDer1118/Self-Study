@@ -1,5 +1,6 @@
 package com.imooc.mybatis;
 
+import com.imooc.mybatis.dto.GoodsDTO;
 import com.imooc.mybatis.entity.Goods;
 import com.imooc.mybatis.entity.Student;
 import com.imooc.mybatis.utils.MyBatisUtils;
@@ -123,6 +124,38 @@ public class MyBatisTestor {
         }
     }
 
+    @Test
+    public void testSelectGoodsMap(){
+        SqlSession sqlSession=null;
+        try{
+            sqlSession=MyBatisUtils.openSession();
+            List<Map> list=sqlSession.selectList("goods.selectGoodsMap");
+            for(Map m:list){
+                //Key的資料型態為String代表資料庫中表的欄位名稱,每個value的資料型態會依照資料庫儲存的資料類型而有不同
+                System.out.println(m);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            MyBatisUtils.closeSession(sqlSession);
+        }
+    }
+
+    @Test
+    public void testSelectGoodsDTO(){
+        SqlSession sqlSession=null;
+        try{
+            sqlSession=MyBatisUtils.openSession();
+            List<GoodsDTO> goodsDTOList=sqlSession.selectList("goods.selectGoodsDTO");
+            for(GoodsDTO g:goodsDTOList){
+                System.out.println(g.getGoods().getTitle());
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            MyBatisUtils.closeSession(sqlSession);
+        }
+    }
     @Test
     public void testStudentSelectionAll(){
         SqlSession sqlSession=null;

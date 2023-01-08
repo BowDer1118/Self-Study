@@ -19,19 +19,59 @@
     <select id="selectAll" resultType="com.imooc.mybatis.entity.Goods">
         select * from t_goods order by goods_id desc limit 10
     </select>
-
     <!--傳參型查詢 透過指定parameterType的數據類型 並使用#{}來標示 調用時要置入的參數-->
     <select id="selectById" parameterType="Integer" resultType="com.imooc.mybatis.entity.Goods">
         select * from t_goods where goods_id=#{value}
     </select>
     <!--
-        傳入一個Map物件來傳入多個參數
+        使用一個Map物件來傳入多個參數
         其中 min max limt 為Map中的key值 調用時會自動獲取該key的value值填入
+        所以我們在寫SQL時要寫key而執行時會被替換成value
     -->
     <select id="selectByPriceRange" parameterType="java.util.Map" resultType="com.imooc.mybatis.entity.Goods">
         select * from t_goods
         where current_price between #{min} and #{max}
         order by current_price
         limit 0,#{limt}
+    </select>
+
+    <!--
+        使用LinkedHashMap當作返回值，返回一個多表查詢後的結果，並且維持表的欄位順序
+        返回的每筆資料都是使用key-value表示
+        其中key為資料庫中表的欄位，value為欄位的值
+    -->
+    <select id="selectGoodsMap" resultType="java.util.LinkedHashMap">
+        select g.*, c.category_name from t_goods g, t_category c
+        where g.category_id=c.category_id
+    </select>
+
+    <!--
+        設定resultMap
+        id:用來唯一標示此物件 通常採用rm+物件
+        type:用來表示物件要保存到的類別名稱
+    -->
+    <resultMap id="rmGoods" type="com.imooc.mybatis.dto.GoodsDTO">
+        <!--
+            id代表設置主鍵的映射規則
+            result代表其他欄位的映射規則
+
+            mybatis的映射規則:將table的欄位(column)內容映射到property中
+            其中property是DTO類中的成員，可以是物件或成員
+            例如:將goods_id這個欄位的內容 自動存入GoodsDTO裡面Goods類的goods物件中goodsId中
+        -->
+        <id property="goods.goodsId" column="goods_id"></id>
+        <result property="goods.title" column="title"></result>
+        <result property="goods.subtitle" column="sub_title"></result>
+        <result property="goods.originalCost" column="original_cost"></result>
+        <result property="goods.currentPrice" column="current_price"></result>
+        <result property="goods.discount" column="discount"></result>
+        <result property="goods.isFreeDelivery" column="is_free_delivery"></result>
+        <result property="goods.categoryId" column="category_id"></result>
+        <result property="categoryName" column="category_name"></result>
+    </resultMap>
+    <!--使用resultMap指定使用哪個resultMap映射查詢結果到DTO物件上-->
+    <select id="selectGoodsDTO" resultMap="rmGoods">
+        select g.*, c.category_name from t_goods g, t_category c
+        where g.category_id=c.category_id
     </select>
 </mapper>
