@@ -74,4 +74,34 @@
         select g.*, c.category_name from t_goods g, t_category c
         where g.category_id=c.category_id
     </select>
+    <!--使用insert插入資料:插入的欄位為t_goods而插入的值為Goods物件的屬性-->
+    <insert id="insert" parameterType="com.imooc.mybatis.entity.Goods">
+        INSERT INTO t_goods(title,sub_title,original_cost,current_price,discount,is_free_delivery,category_id)
+        VALUES (#{title},#{subtitle},#{originalCost},#{currentPrice},#{discount},#{isFreeDelivery},#{categoryId})
+        <!--使用selectKey獲取自動增長的主Key值:在執行完insert後執行此SQL 將last_insert_id()回填給Goods物件的goodsId屬性-->
+        <selectKey resultType="Integer" keyProperty="goodsId" order="AFTER">
+            <!--last_insert_id()為SQL自帶的函數-->
+            select last_insert_id()
+        </selectKey>
+    </insert>
+
+    <!--使用update更新資料:將Goods類的物件內容更新到特定的goods_id號資料上面-->
+    <update id="update" parameterType="com.imooc.mybatis.entity.Goods">
+        UPDATE t_goods
+        SET
+            title=#{title},
+            sub_title=#{subtitle},
+            original_cost=#{originalCost},
+            current_price=#{currentPrice},
+            discount=#{discount},
+            is_free_delivery=#{isFreeDelivery},
+            category_id=#{categoryId}
+        WHERE
+            goods_id=#{goodsId}
+    </update>
+
+    <!--使用delete來刪除資料，通常使用主Key當作索引，所以參數類型是整數代表id的值-->
+    <delete id="delete" parameterType="Integer">
+        delete from t_goods where goods_id =#{value}
+    </delete>
 </mapper>

@@ -11,4 +11,12 @@
     <select id="selectAll" resultType="com.imooc.mybatis.entity.Student">
         select * from t_student order by id
     </select>
+
+    <insert id="insert" parameterType="com.imooc.mybatis.entity.Student">
+        insert into t_student(reg_no,name,sex,age,grade,major)
+        values(#{regNo},#{name},#{sex},#{age},#{grade},#{major})
+        <selectKey resultType="Integer" keyProperty="id" order="AFTER">
+            select last_insert_id()
+        </selectKey>
+    </insert>
 </mapper>

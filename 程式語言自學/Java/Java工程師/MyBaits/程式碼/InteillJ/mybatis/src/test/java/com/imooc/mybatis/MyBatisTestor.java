@@ -156,6 +156,69 @@ public class MyBatisTestor {
             MyBatisUtils.closeSession(sqlSession);
         }
     }
+
+    @Test
+    public void testInsert(){
+        SqlSession sqlSession=null;
+        try{
+            sqlSession=MyBatisUtils.openSession();
+            Goods goods=new Goods();
+            goods.setTitle("測試插入功能");
+            goods.setSubtitle("測試插入功能的資料");
+            goods.setOriginalCost(200f);
+            goods.setCurrentPrice(100f);
+            goods.setDiscount(0.5f);
+            goods.setIsFreeDelivery(1);
+            goods.setCategoryId(43);
+            //將Goods物件插入到資料庫
+            //返回值為成功插入的紀錄總數
+            int num=sqlSession.insert("goods.insert",goods);
+            //使用commit將insert的資料都寫入資料庫
+            sqlSession.commit();
+            System.out.println(goods.getGoodsId());
+        }catch (Exception e){
+            if(sqlSession!=null){
+                //使用rollback回滾插入操作
+                sqlSession.rollback();
+            }
+            e.printStackTrace();
+        }finally {
+            MyBatisUtils.closeSession(sqlSession);
+        }
+    }
+
+    @Test
+    public void testUpdate(){
+        SqlSession sqlSession=null;
+        try{
+            sqlSession=MyBatisUtils.openSession();
+            //先執行搜尋並更資料
+            Goods goods=sqlSession.selectOne("goods.selectById",739);
+            goods.setTitle("更新測試商品");
+            //更新資料庫資料 返回值為本次更新的數量
+            int num=sqlSession.update("goods.update",goods);
+            //執行更新
+            sqlSession.commit();
+            goods=sqlSession.selectOne("goods.selectById",739);
+            System.out.println(goods);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void testDelete(){
+        SqlSession sqlSession=null;
+        try{
+            sqlSession=MyBatisUtils.openSession();
+            //使用主Key:goodsId來當作要刪除的索引 返回值為總共刪除的資料數量
+            int num=sqlSession.update("goods.delete",739);
+            sqlSession.commit();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
     @Test
     public void testStudentSelectionAll(){
         SqlSession sqlSession=null;
@@ -169,4 +232,35 @@ public class MyBatisTestor {
             e.printStackTrace();
         }
     }
+
+    @Test
+    public void testStudentInsert(){
+        SqlSession sqlSession=null;
+        try{
+            sqlSession=MyBatisUtils.openSession();
+           Student student=new Student();
+           student.setRegNo(20171208);
+           student.setName("言豫津");
+           student.setSex("男");
+           student.setAge(26);
+           student.setGrade("2013");
+           student.setMajor("哲學系");
+            //返回值為成功插入的紀錄總數
+            int num=sqlSession.insert("student.insert",student);
+            System.out.printf("Insert %d data into database\n",num);
+            //使用commit將insert的資料都寫入資料庫
+            sqlSession.commit();
+            System.out.println(student);
+        }catch (Exception e){
+            if(sqlSession!=null){
+                //使用rollback回滾插入操作
+                sqlSession.rollback();
+            }
+            e.printStackTrace();
+        }finally {
+            MyBatisUtils.closeSession(sqlSession);
+        }
+    }
+
+
 }
