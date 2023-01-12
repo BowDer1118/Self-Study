@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--配置logback日誌套件的配置項目-->
+<configuration>
+    <!--
+        使用appender代表輸出器:設定往哪裡輸出資料
+        name:自訂義輸出位置的名稱(為appender取一個名字)
+        class:指定要輸出的位置的具體物件，使用ConsoleAppender代表向 控制台輸出
+    -->
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <!--設定輸出的內容格式-->
+        <encoder>
+            <!--
+                輸出格式:
+                    時間%d:{小時:分:秒:毫秒}
+                    執行緒%thread:{輸出的執行緒名稱}
+                    日誌訊息的級別%level:{日誌輸出的級別(-5為向右五個字元對齊)}
+                    日誌資訊的內容由哪個類產生%logger:%logger{至多能輸出的字元數量}
+                    日誌的訊息%msg
+                    換行符號%n
+                -->
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+    <!--
+        設定日誌輸出的root標籤
+        level:要輸出的日誌最低級別:大於以上級別都輸出(例如:level="debug"代表debug以上的級別都輸出)
+            level有5個優先級別:
+                error:系統錯誤
+                warn:存在風險或不當使用
+                info:一般消息
+                debug:程式debug時的訊息
+                trace:程式運行時的追蹤訊息
+        appender-ref:代表要輸出的規則格式(例如:由console這個appender格式來輸出)
+    -->
+    <root level="debug">
+        <appender-ref ref="console"></appender-ref>
+    </root>
+</configuration>

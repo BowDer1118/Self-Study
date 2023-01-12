@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="goodsDetail">
+    <!--按照goods_id查詢-->
+    <select id="selectByGoodsId" parameterType="Integer"
+            resultType="com.imooc.mybatis.entity.GoodsDetail">
+        select * from t_goods_detail where goods_id = #{value}
+    </select>
+
+<!--    <resultMap id="rmGoodsDetail" type="com.imooc.mybatis.entity.GoodsDetail">-->
+<!--        <id column="gd_id" property="gdId"></id>-->
+<!--        &lt;!&ndash;使用關聯標籤:從多的一方關聯到一的一方&ndash;&gt;-->
+<!--        <association property="goods" select="goods.selectById" column="goods_id"></association>-->
+<!--    </resultMap>-->
+
+<!--    <select id="selectManyToOne" resultMap="rmGoodsDetail">-->
+<!--        select * from t_goods_detail limit 0,10-->
+<!--    </select>-->
+
+    <resultMap id="rmGoodsDetail" type="com.imooc.mybatis.entity.GoodsDetail">
+        <id column="gd_id" property="gdId"/>
+        <result column="goods_id" property="goodsId"/>
+        <!--手動再次映射將goods_id再給goodsId 因為association會將goods_id給goods物件 而不是給goodsId-->
+        <result column="goods_id" property="goodsId"></result>
+        <association property="goods" select="goods.selectById" column="goods_id"></association>
+    </resultMap>
+    <select id="selectManyToOne" resultMap="rmGoodsDetail">
+        select * from t_goods_detail limit 0,20
+    </select>
+
+</mapper>

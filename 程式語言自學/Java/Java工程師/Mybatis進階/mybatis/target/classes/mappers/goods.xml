@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--用來描述Goods類中的屬性與資料庫中t_goods Table的映射關係-->
+<!--
+    namespace存在的意義是因為mappers可能會有很多mapper.xml
+    其中每個mapper可能都會有相同的select id 因此要使用namespace做出唯一性
+
+    例如:可能有goods.xml category.xml 這兩個mapper
+    且都有selectAll這個id 所以我們需要有namespace做出區隔
+    讓mybatis知道，我們要調用哪個namespace的selectAll
+-->
+<mapper namespace="goods">
+    <!--
+        使用cache標籤開啟Lv2緩存，也就是namespace範圍的緩存
+        eviction:當緩存數量到達上限後，緩存的清空策略
+            LRU:根據時間最久未使用得先移除
+            LFU:根據訪問次數最少被訪問的先移除
+            FIFO:先進先出
+            SOFT:移除基於垃圾收集器狀態與軟引用的對象
+            WEAK:更積極版本的SOFT狀態
+            其中SOFT與WEAK這兩種方式不是由mybatis來進行管理
+            是由JVM垃圾回收機制來進行緩存的清除
+            不太建議使用SOFT和WEAK
+        flushInterval:緩存的刷新區隔，代表多長時間自動清除全部的緩存
+            使用的單位為毫秒
+        size:緩存最大數量，也就是最多同時存在多少個cache物件
+            值得注意的是，如果查詢的目標沒有唯一性或標誌性，不太建議緩存，
+            例如:selectAll這條查詢，是無目標性的查詢，如果使用緩存則會占用大量緩存而沒有被重複查詢
+            反之例如，使用selectById這種以目的性的查詢，就很適合存入緩存
+
+            還有如果查詢結果為一個集合物件，例如:List或Map等等的集合物件
+            則緩存的結果是該集合物件而不是集合內的所有元素物件
+
+        readOnly:代表緩存是否為Read Only Mode
+            如果為true代表讀取緩存時，讀取出來的資料是物件本身(可以看做獲取引用或指標的概念)，執行效率高，但安全度較低
+            如果為false代表讀取緩存時，讀取出來的資料為物件的副本，每次取出的物件都是不同的，安全性較高，但會有建立物件副本的性能開銷
+
+        在select標籤中可放入的參數
+        1.useCache參數:決定是否要緩存查詢結果
+            true:當前查詢結果被緩存
+            false:當前查詢結果不要放入緩存
+        2.flushCache參數:決定是否要強制清空緩存
+            true:強制清空緩存，同時，該次查詢結果一樣不會被放入緩存
+            false:正常狀態，不干預清空緩存操作
+    -->
+    <cache eviction="LRU" flushInterval="600000" size="500" readOnly="true"></cache>
+
+
+    <!--
+        id:為SQL查詢語句取一個名稱(別名)，當呼叫此id就是呼叫該SQL查詢語句
+        resultType:代表查詢完畢後的資料要包裝成哪個類，例如:使用Goods類保存
+    -->
+    <select id="selectAll" resultType="com.imooc.mybatis.entity.Goods">
+        select * from t_goods order by goods_id desc limit 10
+    </select>
+    <!--傳參型查詢 透過指定parameterType的數據類型 並使用#{}來標示 調用時要置入的參數-->
+    <select id="selectById" parameterType="Integer" resultType="com.imooc.mybatis.entity.Goods">
+        select * from t_goods where goods_id=#{value}
+    </select>
+    <!--
+        使用一個Map物件來傳入多個參數
+        其中 min max limt 為Map中的key值 調用時會自動獲取該key的value值填入
+        所以我們在寫SQL時要寫key而執行時會被替換成value
+    -->
+    <select id="selectByPriceRange" parameterType="java.util.Map" resultType="com.imooc.mybatis.entity.Goods">
+        select * from t_goods
+        where current_price between #{min} and #{max}
+        order by current_price
+        limit 0,#{limt}
+    </select>
+
+    <!--
+        使用LinkedHashMap當作返回值，返回一個多表查詢後的結果，並且維持表的欄位順序
+        返回的每筆資料都是使用key-value表示
+        其中key為資料庫中表的欄位，value為欄位的值
+    -->
+    <select id="selectGoodsMap" resultType="java.util.LinkedHashMap">
+        select g.*, c.category_name from t_goods g, t_category c
+        where g.category_id=c.category_id
+    </select>
+
+    <!--
+        設定resultMap
+        id:用來唯一標示此物件 通常採用rm+物件
+        type:用來表示物件要保存到的類別名稱
+    -->
+    <resultMap id="rmGoods" type="com.imooc.mybatis.dto.GoodsDTO">
+        <!--
+            id代表設置主鍵的映射規則
+            result代表其他欄位的映射規則
+
+            mybatis的映射規則:將table的欄位(column)內容映射到property中
+            其中property是DTO類中的成員，可以是物件或成員
+            例如:將goods_id這個欄位的內容 自動存入GoodsDTO裡面Goods類的goods物件中goodsId中
+        -->
+        <id property="goods.goodsId" column="goods_id"></id>
+        <result property="goods.title" column="title"></result>
+        <result property="goods.subtitle" column="sub_title"></result>
+        <result property="goods.originalCost" column="original_cost"></result>
+        <result property="goods.currentPrice" column="current_price"></result>
+        <result property="goods.discount" column="discount"></result>
+        <result property="goods.isFreeDelivery" column="is_free_delivery"></result>
+        <result property="goods.categoryId" column="category_id"></result>
+        <result property="categoryName" column="category_name"></result>
+    </resultMap>
+    <!--使用resultMap指定使用哪個resultMap映射查詢結果到DTO物件上-->
+    <select id="selectGoodsDTO" resultMap="rmGoods">
+        select g.*, c.category_name from t_goods g, t_category c
+        where g.category_id=c.category_id
+    </select>
+    <!--使用insert插入資料:插入的欄位為t_goods而插入的值為Goods物件的屬性-->
+    <insert id="insert" parameterType="com.imooc.mybatis.entity.Goods">
+        INSERT INTO t_goods(title,sub_title,original_cost,current_price,discount,is_free_delivery,category_id)
+        VALUES (#{title},#{subtitle},#{originalCost},#{currentPrice},#{discount},#{isFreeDelivery},#{categoryId})
+        <!--使用selectKey獲取自動增長的主Key值:在執行完insert後執行此SQL 將last_insert_id()回填給Goods物件的goodsId屬性-->
+        <selectKey resultType="Integer" keyProperty="goodsId" order="AFTER">
+            <!--last_insert_id()為SQL自帶的函數-->
+            select last_insert_id()
+        </selectKey>
+    </insert>
+
+    <!--使用update更新資料:將Goods類的物件內容更新到特定的goods_id號資料上面-->
+    <update id="update" parameterType="com.imooc.mybatis.entity.Goods">
+        UPDATE t_goods
+        SET
+            title=#{title},
+            sub_title=#{subtitle},
+            original_cost=#{originalCost},
+            current_price=#{currentPrice},
+            discount=#{discount},
+            is_free_delivery=#{isFreeDelivery},
+            category_id=#{categoryId}
+        WHERE
+            goods_id=#{goodsId}
+    </update>
+
+    <!--使用delete來刪除資料，通常使用主Key當作索引，所以參數類型是整數代表id的值-->
+    <delete id="delete" parameterType="Integer">
+        delete from t_goods where goods_id =#{value}
+    </delete>
+    
+    <!--動態SQL查詢-->
+    <select id="dynamicSQL" parameterType="java.util.Map" resultType="com.imooc.mybatis.entity.Goods">
+        select * from t_goods
+        <!--
+            動態where語句
+            如果where標籤裡面有if標籤則會自動讓語法正確
+            例如下面2個if標籤啟動時 會有多餘的and這個字詞 導致破壞了SQL語法規則
+            但使用where標籤後mybatis會自動幫我們處理掉多餘的字詞 讓SQL語法正確
+            也就是適時按狀況刪除或加入多餘的and讓SQL查詢完整
+        -->
+        <where>
+            <!--
+                使用if test 來判斷條件是否成立
+                如果Map中categoryId這個key存在(代表有categoryId這個key)
+            -->
+            <if test="categoryId !=null">
+                and category_id=#{categoryId}
+            </if>
+            <!--
+                "<" 小於符號在xml中有保留字
+                所以需要使用"%lt;"這個轉義符號
+            -->
+            <if test="currentPrice !=null">
+                and current_price &lt; #{currentPrice}
+            </if>
+        </where>
+    </select>
+    <!--
+    使用resultMap進行一對多的映射
+        resultMap可用于说明一对多或者多对一的映射逻辑
+        id 是resultMap属性引用的标志
+        type 指向One的实体(Goods)
+    -->
+    <resultMap id="rmGoods1" type="com.imooc.mybatis.entity.Goods">
+        <!--id的column要放主鍵-->
+        <id column="goods_id" property="goodsId"></id>
+        <!--
+            描述集合的數據從哪裡獲取
+            property是物件的屬性(也就是要放入資料的集合)
+            select就是要執行的SQL語句的id
+            column就是在關聯時要使用的key
+
+            collection的含义是,在
+            select * from t_goods limit 0,1 得到结果后,对所有Goods对象遍历得到goods_id字段值,
+            并代入到goodsDetail命名空间的findByGoodsId的SQL中执行查询,
+            将得到的"商品详情"集合赋值给goodsDetails List对象.
+        -->
+        <collection property="goodsDetails" select="goodsDetail.selectByGoodsId" column="goods_id"></collection>
+    </resultMap>
+
+    <!--透過Goods查詢到多個GoodsDetail物件-->
+    <select id="selectOneToMany" resultMap="rmGoods1">
+        <!--只對一個物件做多對一的映射-->
+        select * from t_goods limit 0,10
+    </select>
+
+    <select id="selectPage" resultType="com.imooc.mybatis.entity.Goods">
+        select * from t_goods where current_price &lt; 1000
+    </select>
+
+    <!--
+        批次插入語法
+        INSERT INTO table
+        VALUES ("a","a1","a2"),("b","b1","b2"),....
+     -->
+    <insert id="batchInsert" parameterType="java.util.List">
+        INSERT INTO t_goods(title, sub_title, original_cost, current_price, discount, is_free_delivery, category_id)
+        VALUES
+        <!--
+            使用foreach標籤對容器做遍歷
+            collection:代表要遍歷的容器種類(mybatis有嚴格要求)
+            item:代表每個元素拿出來會以此名稱暫存(類似於foreach(Object objName:容器)
+            index:代表索引位置
+            separator:代表分割依據，也就每個元素之間要添加的字串
+        -->
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.title}, #{item.subtitle}, #{item.originalCost}, #{item.currentPrice}, #{item.discount}, #{item.isFreeDelivery}, #{item.categoryId})
+        </foreach>
+    </insert>
+</mapper>

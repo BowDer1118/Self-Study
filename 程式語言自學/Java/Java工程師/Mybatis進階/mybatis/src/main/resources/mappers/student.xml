@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="student">
+    <!--
+        id:為SQL查詢語句取一個名稱(別名)，當呼叫此id就是呼叫該SQL查詢語句
+        resultType:代表查詢完畢後的資料要包裝成哪個類，例如:使用Goods類保存
+    -->
+    <select id="selectAll" resultType="com.imooc.mybatis.entity.Student">
+        select * from t_student order by id
+    </select>
+
+    <insert id="insert" parameterType="com.imooc.mybatis.entity.Student">
+        insert into t_student(reg_no,name,sex,age,grade,major)
+        values(#{regNo},#{name},#{sex},#{age},#{grade},#{major})
+        <selectKey resultType="Integer" keyProperty="id" order="AFTER">
+            select last_insert_id()
+        </selectKey>
+    </insert>
+
+    <select id="dynamicSQL" parameterType="java.util.Map" resultType="com.imooc.mybatis.entity.Student">
+        select * from t_student
+        <where>
+            <if test="age!=null">
+                and age &gt; 30
+            </if>
+            <if test="sex!=null">
+                and sex = #{sex}
+            </if>
+        </where>
+    </select>
+</mapper>

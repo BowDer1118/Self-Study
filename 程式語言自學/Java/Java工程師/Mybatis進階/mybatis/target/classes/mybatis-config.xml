@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <settings>
+        <!--
+            由於mybatis只會將資料庫table中的屬性與我們創建的物件屬性名稱相同才會幫我們封裝
+            因此我們需要設定映射關係:底線轉駝峰命名法 (sub_title==>subTitle)
+            這樣mybatis就會自動將資料庫table中的屬性名稱的底線轉為駝峰命名法
+            透過這種方式讓資料庫table中的屬性與我們自己寫的class屬性相同 達到自動填充的效果
+            例如:
+                [原本]table中的屬性名稱為sub_title 而Goods類中的屬性名稱為subTitle 由於名稱不同mybatis不會自動填充資料
+                [加入Setting]table中的屬性名稱會從sub_title轉換為subTitle則剛好與Goods類中的屬性名稱相同，這樣就會自動填充了
+        -->
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+    </settings>
+    <!--導入插件到mybatis中-->
+    <plugins>
+        <!--指定pagehelper的核心Class-->
+        <plugin interceptor="com.github.pagehelper.PageInterceptor">
+            <!--指定使用的資料庫類型-->
+            <property name="helperDialect" value="mysql"/>
+            <!--分類合理化設定-->
+            <property name="reasonable" value="true"/>
+        </plugin>
+    </plugins>
+
+    <!--default指向默認的資料庫環境:目前使用id為dev的環境-->
+    <environments default="dev">
+        <!--環境名稱(可以多個)-->
+        <environment id="dev">
+            <!--對資料庫commit/rollback的管理方式-->
+            <transactionManager type="JDBC"></transactionManager>
+            <!--對資料庫連接的方式-->
+            <!--<dataSource type="POOLED">-->
+            <!--使用C3P0連接池取代mybatis的連接池-->
+            <dataSource type="com.imooc.mybatis.datasource.C3P0DataSourceFactory">
+                <!--驅動器-->
+                <property name="driverClass" value="com.mysql.jdbc.Driver"/>
+                <!--資料庫的位置-->
+                <property name="jdbcUrl" value="jdbc:mysql://localhost:3306/babytun?useUnicode=true&amp;characterEncoding=UTF-8"/>
+                <!--用戶的帳號密碼-->
+                <property name="user" value="root"/>
+                <property name="password" value="root"/>
+                <!--連接池初始化時的連接數量-->
+                <property name="initialPoolSize" value="5"/>
+                <!--設定最小與最大連接數量-->
+                <property name="maxPoolSize" value="20"/>
+                <property name="minPoolSize" value="5"/>
+            </dataSource>
+        </environment>
+
+        <environment id="prd">
+            <!--對資料庫commit/rollback的管理方式-->
+            <transactionManager type="JDBC"></transactionManager>
+            <!--對資料庫連接的方式-->
+            <dataSource type="POOLED">
+                <!--驅動器-->
+                <property name="driver" value="com.mysql.jdbc.Driver"/>
+                <!--資料庫的位置-->
+                <property name="url" value="jdbc:mysql://192.168.1.155:3306/babytun?useUnicode=true&amp;characterEncoding=UTF-8"/>
+                <!--用戶的帳號密碼-->
+                <property name="username" value="root"/>
+                <property name="password" value="root"/>
+            </dataSource>
+        </environment>
+    </environments>
+    <!--告訴mybatis mapper資源-->
+    <mappers>
+        <mapper resource="mappers/goods.xml"></mapper>
+        <mapper resource="mappers/student.xml"></mapper>
+        <mapper resource="mappers/goods_detail.xml"/>
+    </mappers>
+</configuration>
