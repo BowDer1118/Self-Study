@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--模擬IoC容器的語法-->
+<beans>
+    <bean id="sweetApple" class="com.imooc.spring.ioc.entity.Apple">
+        <property name="title" value="紅富士"></property>
+        <property name="color" value="紅色"></property>
+        <property name="origin" value="歐洲"></property>
+    </bean>
+</beans>

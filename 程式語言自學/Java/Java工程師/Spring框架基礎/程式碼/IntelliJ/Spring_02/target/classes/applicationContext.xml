@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        https://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!--在bean中如果沒有初始化屬性，則是默認調用無參Constructor-->
+    <bean id="apple1" class="com.imooc.spring.ioc.entity.Apple"></bean>
+    <!--
+        使用Constructor構造物件(使用指定參數名稱的方式)
+        name:代表參數的名稱
+        [注意]name是傳入的參數名稱，而不是物件本身的屬性名稱
+    -->
+    <bean id="apple2" class="com.imooc.spring.ioc.entity.Apple">
+        <constructor-arg name="title" value="紅富士"></constructor-arg>
+        <constructor-arg name="origin" value="歐洲"></constructor-arg>
+        <constructor-arg name="color" value="紅色"></constructor-arg>
+    </bean>
+    <!--
+        使用Constructor構造物件(使用參數傳入的順序)
+        index:表示第index個傳入的參數
+    -->
+    <bean id="apple3" class="com.imooc.spring.ioc.entity.Apple">
+        <constructor-arg index="0" value="紅富士"></constructor-arg>
+        <constructor-arg index="1" value="歐洲"></constructor-arg>
+        <constructor-arg index="2" value="紅色"></constructor-arg>
+    </bean>
+    <!--
+        使用靜態工廠方法產生bean
+        class:代表靜態工廠的類
+        factory-method:代表產生物件的函數
+    -->
+    <bean id="apple4" class="com.imooc.spring.ioc.factory.AppleStaticFactory" factory-method="createSweetApple"></bean>
+
+    <!--
+        利用工廠物件的實例獲取物件
+        先建立factoryInstance工廠類物件
+        再使用該物件創造Apple物件
+        factory-bean:指定哪個一bean是工廠類
+        factory-method:代表要產生物件的函數
+
+        name標籤意思與id一樣都是唯一標識符號，但name可以取多個別名 且新的同名name會覆蓋舊的同名name
+    -->
+    <bean id="factoryInstance" class="com.imooc.spring.ioc.factory.AppleFactoryInstance"></bean>
+    <bean name="apple5,test" factory-bean="factoryInstance" factory-method="createSweetApple"></bean>
+</beans>

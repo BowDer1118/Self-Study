@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        https://www.springframework.org/schema/beans/spring-beans.xsd">
+    <!--使用singleton設定bean:在IoC容器啟動後就會馬上產生物件-->
+<!--    <bean id="userDao" class="com.imooc.spring.ioc.dao.UserDao" scope="singleton"></bean>-->
+    <!--使用prototype設定bean:在調用時才會產生物件-->
+    <bean id="userDao2" class="com.imooc.spring.ioc.dao.UserDao" scope="prototype"></bean>
+
+    <!--在當prototype的bean被其他人reference的時候才會創立物件-->
+    <bean id="userService" class="com.imooc.spring.ioc.service.UserService" scope="prototype">
+        <property name="userDao" ref="userDao2"></property>
+    </bean>
+
+    <!--
+        使用init-method:IoC初始化物件後執行某項函數
+        IoC步驟如下:
+        1.調用Constructor構造物件
+        2.調用Setters將property設定好
+        3.執行init-method函數
+        IoC要銷毀時會調用destory-method
+    -->
+    <bean id="order1" class="com.imooc.spring.ioc.entity.Order" init-method="init" destroy-method="destroy">
+        <property name="price" value="19.8"></property>
+        <property name="quantity" value="1000"></property>
+    </bean>
+</beans>

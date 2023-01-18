@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        https://www.springframework.org/schema/beans/spring-beans.xsd">
+<!--
+    applicationContext.xml 這個檔名是強制的
+    為Spring IoC容器的核心配置文件
+    所有物件的創建與關聯的設定都在此文件設定
+-->
+
+    <!--
+        bean標籤:用於實例化物件
+        在IoC容器啟動時，自動由Spring實例化Apple物件，取名為sweetApple放入到容器中
+    -->
+    <bean id="sweatApple" class="com.imooc.spring.ioc.entity.Apple">
+        <!--
+            設定sweatApple物件的屬性
+            可以想像就是Spring幫我們做下面這件事情
+            Apple sweatApple=new Apple("紅富士","紅色","歐洲");
+        -->
+        <property name="title" value="紅富士"></property>
+        <property name="origin" value="歐洲"></property>
+        <property name="color" value="紅色"></property>
+    </bean>
+    <bean id="sourApple" class="com.imooc.spring.ioc.entity.Apple">
+        <property name="title" value="青蘋果"></property>
+        <property name="origin" value="中亞"></property>
+        <property name="color" value="綠色"></property>
+    </bean>
+    <bean id="softApple" class="com.imooc.spring.ioc.entity.Apple">
+        <property name="title" value="金帥"></property>
+        <property name="origin" value="中國"></property>
+        <property name="color" value="黃色"></property>
+    </bean>
+
+    <bean id="lily" class="com.imooc.spring.ioc.entity.Child">
+        <property name="name" value="莉莉"></property>
+        <!--使用ref引用其他bean-->
+        <property name="apple" ref="sweatApple"></property>
+    </bean>
+
+    <bean id="andy" class="com.imooc.spring.ioc.entity.Child">
+        <property name="name" value="安迪"></property>
+        <!--使用ref引用其他bean-->
+        <property name="apple" ref="sourApple"></property>
+    </bean>
+
+    <bean id="luna" class="com.imooc.spring.ioc.entity.Child">
+        <property name="name" value="露娜"></property>
+        <!--使用ref引用其他bean-->
+        <property name="apple" ref="softApple"></property>
+    </bean>
+</beans>

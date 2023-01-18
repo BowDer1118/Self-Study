@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        https://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="c1" class="com.imooc.spring.ioc.entity.Computer">
+        <constructor-arg name="brand" value="ROG"></constructor-arg>
+        <constructor-arg name="type" value="PC"></constructor-arg>
+        <constructor-arg name="sn" value="8389283011"></constructor-arg>
+        <constructor-arg name="price" value="3084"></constructor-arg>
+    </bean>
+
+    <bean id="company" class="com.imooc.spring.ioc.entity.Company">
+        <!--加入元素到Set中容器中(注意:IoC容器是注入LinkedHashSet，因此是有序的)-->
+        <property name="rooms">
+            <set>
+                <value>2001-總裁辦公室</value>
+                <value>2003-總經理辦公室</value>
+                <value>2010-研發部辦公室</value>
+                <value>2010-研發部辦公室</value> <!--重複的元素會自動被去重-->
+            </set>
+        </property>
+
+        <property name="computers">
+            <map>
+                <entry key="dev-88172" value-ref="c1"></entry>
+                <!--使用內置bean方法指定key-value中的value-->
+                <entry key="dev-88173">
+                    <!--內置的bean 有點類似匿名函數或物件的概念-->
+                    <bean class="com.imooc.spring.ioc.entity.Computer">
+                        <constructor-arg name="brand" value="ROG"></constructor-arg>
+                        <constructor-arg name="type" value="PC"></constructor-arg>
+                        <constructor-arg name="sn" value="8389283012"></constructor-arg>
+                        <constructor-arg name="price" value="3085"></constructor-arg>
+                    </bean>
+                </entry>
+            </map>
+        </property>
+
+        <property name="info">
+            <!--Properties類要使用props標籤-->
+            <props>
+                <prop key="phone">(02)12345678</prop>
+                <prop key="address">新北市中和區xxx大樓</prop>
+                <prop key="website">https://www.bowder.com</prop>
+            </props>
+        </property>
+    </bean>
+
+</beans>

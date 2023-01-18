@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        https://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="sweatApple" class="com.imooc.spring.ioc.entity.Apple">
+        <!--IoC容器是自動利用反射機制調用setter方法來設定value值到屬性中的-->
+        <property name="title" value="紅富士"></property>
+        <property name="color" value="紅色"></property>
+        <property name="origin" value="歐洲"></property>
+    </bean>
+
+    <bean id="lily" class="com.imooc.spring.ioc.entity.Child">
+        <property name="name" value="莉莉"></property>
+        <property name="apple" ref="sweatApple"></property>
+    </bean>
+
+    <bean id="sourApple" class="com.imooc.spring.ioc.entity.Apple">
+        <property name="title" value="青蘋果"></property>
+        <property name="color" value="綠色"></property>
+        <property name="origin" value="中亞"></property>
+    </bean>
+    
+    <bean id="andy" class="com.imooc.spring.ioc.entity.Child">
+        <constructor-arg name="name" value="莉莉"></constructor-arg>
+        <constructor-arg name="apple" ref="sourApple"></constructor-arg>
+    </bean>
+</beans>
