@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        https://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/aop
+        https://www.springframework.org/schema/aop/spring-aop.xsd">
+    <bean id="userDao" class="com.imooc.spring.aop.dao.UserDao"/>
+    <bean id="userService" class="com.imooc.spring.aop.service.UserService">
+        <property name="userDao" ref="userDao"/>
+    </bean>
+    <bean id="employeeDao" class="com.imooc.spring.aop.dao.EmployeeDao"/>
+    <bean id="employeeService" class="com.imooc.spring.aop.service.EmployeeService">
+        <property name="employeeDao" ref="employeeDao"/>
+    </bean>
+    
+    <!--AOP配置-->
+    <!--先建立MethodAspect類的bean-->
+    <bean id="methodAspect" class="com.imooc.spring.aop.aspect.MethodAspect"></bean>
+    <!--配置AOP config-->
+    <aop:config>
+        <!--
+            pointcut代表切點
+            使用execution表達式描述切面的作用範圍
+            execution(public * com.imooc..*.*(..)):說明切面作用在com.imooc包下的所有類的所有方法上
+        -->
+        <aop:pointcut id="pointcut" expression="execution(public * com.imooc..*.*(..))"/>
+        <!--定義切面類，使用ref指定物件為methodAspect bean的類-->
+        <aop:aspect ref="methodAspect">
+            <!--
+                定義切面功能執行的時機
+                aop:before通知:在執行目標方法前，先執行methodAspect.printExecutionTime()
+            -->
+            <aop:before method="printExecutionTime" pointcut-ref="pointcut"></aop:before>
+            <aop:after method="doAfter" pointcut-ref="pointcut"></aop:after>
+            <!--返回後通知需要使用returning屬性指定目標method的返回值要存放到哪個參數中-->
+            <aop:after-returning method="doAfterReturning" returning="ret" pointcut-ref="pointcut"></aop:after-returning>
+            <!--異常通知-->
+            <aop:after-throwing method="doAfterThrowing" throwing="th" pointcut-ref="pointcut"></aop:after-throwing>
+        </aop:aspect>
+    </aop:config>
+
+</beans>
