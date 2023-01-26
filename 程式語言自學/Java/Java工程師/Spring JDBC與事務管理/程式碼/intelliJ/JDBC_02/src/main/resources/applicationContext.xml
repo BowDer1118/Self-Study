@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        https://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop.xsd"
+>
+
+    <!--定義資料來源:用來指定用哪種driver、哪種資料庫-->
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <!--指定driver為mySQL的driver(也就是我們剛剛安裝的mySQL依賴)-->
+        <property name="driverClassName" value="com.mysql.cj.jdbc.Driver"></property>
+        <!--指定資料庫位置與運行參數-->
+        <property name="url" value="jdbc:mysql://localhost:3306/imooc?characterEncoding=UTF-8&amp;serverTimezone=GMT%2B8&amp;allowPublicKeyRetrial=true&amp;useUnicode=true"/>
+        <!--指定使用者-->
+        <property name="username" value="root"></property>
+        <property name="password" value="root"></property>
+    </bean>
+
+    <!--設定JDBCTemplate物件:用來和資料庫建立連結，並提供CURD的api，beanId通常建議叫做jdbcTemplate-->
+    <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <!--指定資料來源為上面建立的dataSource物件-->
+        <property name="dataSource" ref="dataSource"></property>
+    </bean>
+
+    <bean id="employeeDao" class="com.imooc.spring.jdbc.dao.EmployeeDao">
+        <!--為Dao類注入jdbcTemplate物件-->
+        <property name="jdbcTemplate" ref="jdbcTemplate"></property>
+    </bean>
+
+    <bean id="employeeService" class="com.imooc.spring.jdbc.service.EmployeeService">
+        <property name="employeeDao" ref="employeeDao"></property>
+    </bean>
+
+    <!--事務管理器-->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <!--綁定資料來源-->
+        <property name="dataSource" ref="dataSource"></property>
+    </bean>
+
+    <!--配置事務通知，決定哪些方法要使用事務管理，哪些不使用-->
+    <tx:advice id="txAdvice" transaction-manager="transactionManager">
+        <!--設定哪些方法要使用事務，哪些不要使用事務-->
+        <tx:attributes>
+            <!--
+                要使用事務的方法
+                propagation代表事務使用的需求:REQUIRED代表此method需要使用事務管理
+                當運行正常結束，則commit，執行時異常則rollback
+            -->
+            <tx:method name="batch*" propagation="REQUIRED"/>
+        </tx:attributes>
+    </tx:advice>
+    <!--定義作用範圍-->
+    <aop:config>
+        <aop:pointcut id="pointcut" expression="execution(* com.imooc..*Service.*(..))"/>
+        <!--指定通知的作用域-->
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="pointcut"></aop:advisor>
+    </aop:config>
+</beans>

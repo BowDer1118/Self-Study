@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        https://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!--定義資料來源:用來指定用哪種driver、哪種資料庫-->
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <!--指定driver為mySQL的driver(也就是我們剛剛安裝的mySQL依賴)-->
+        <property name="driverClassName" value="com.mysql.cj.jdbc.Driver"></property>
+        <!--指定資料庫位置與運行參數-->
+        <property name="url" value="jdbc:mysql://localhost:3306/imooc?characterEncoding=UTF-8&amp;serverTimezone=GMT%2B8&amp;allowPublicKeyRetrial=true&amp;useUnicode=true"/>
+        <!--指定使用者-->
+        <property name="username" value="root"></property>
+        <property name="password" value="root"></property>
+    </bean>
+
+    <!--設定JDBCTemplate物件:用來和資料庫建立連結，並提供CURD的api，beanId通常建議叫做jdbcTemplate-->
+    <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <!--指定資料來源為上面建立的dataSource物件-->
+        <property name="dataSource" ref="dataSource"></property>
+    </bean>
+
+    <bean id="employeeDao" class="com.imooc.spring.jdbc.dao.EmployeeDao">
+        <!--為Dao類注入jdbcTemplate物件-->
+        <property name="jdbcTemplate" ref="jdbcTemplate"></property>
+    </bean>
+
+    <bean id="employeeService" class="com.imooc.spring.jdbc.service.EmployeeService">
+        <property name="employeeDao" ref="employeeDao"></property>
+        <property name="transactionManager" ref="transactionManager"></property>
+    </bean>
+    <!--事務管理器-->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <!--綁定資料來源-->
+        <property name="dataSource" ref="dataSource"></property>
+    </bean>
+</beans>
