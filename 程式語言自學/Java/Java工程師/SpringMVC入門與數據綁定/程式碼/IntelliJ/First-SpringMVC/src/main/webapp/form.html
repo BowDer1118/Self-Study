@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>學員調查問卷</title>
+  <style>
+    .container {
+      position: absolute;
+      border: 1px solid #cccccc;
+      left: 50%;
+      top: 50%;
+      width: 400px;
+      height: 600px;
+      margin-left: -200px;
+      margin-top: -300px;
+      box-sizing: border-box;
+      padding: 10px;
+    }
+    h2{
+      margin: 10px 0px;
+      text-align: center;
+    }
+    h3{
+      margin: 10px  0px;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h2>學員調查問卷</h2>
+  <form action="./apply" method="post">
+    <h3>您的姓名</h3>
+    <input name="name" class="text"  style="width: 150px">
+    <h3>您正在學習的技術方向</h3>
+    <select name="course" style="width: 150px">
+      <option value="java">Java</option>
+      <option value="h5">HTML5</option>
+      <option value="python">Python</option>
+      <option value="php">PHP</option>
+    </select>
+    <div>
+      <h3>您的學習目的：</h3>
+      <input type="checkbox" name="purpose" value="1">就業找工作
+      <input type="checkbox" name="purpose" value="2">工作要求
+      <input type="checkbox" name="purpose" value="3">興趣愛好
+      <input type="checkbox" name="purpose" value="4">其他
+    </div>
+
+    <h3>收貨人</h3>
+    <input name="delivery.name" class="text" style="width:150px">
+    <h3>連絡電話</h3>
+    <input name="delivery.mobile" class="text" style="width:150px">
+    <h3>收貨地址</h3>
+    <input name="delivery.address" class="text" style="width:150px">
+
+    <div style="text-align: center;padding-top:10px" >
+      <input type="submit" value="提交" style="width:100px">
+    </div>
+
+  </form>
+
+</div>
+</body>
+</html>
