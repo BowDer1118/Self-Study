@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mv="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+            http://www.springframework.org/schema/beans/spring-beans.xsd
+            http://www.springframework.org/schema/context
+            http://www.springframework.org/schema/context/spring-context.xsd
+            http://www.springframework.org/schema/mvc
+            http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+    <!--開啟IoC註解開發模式:自動掃描-->
+    <context:component-scan base-package="com.imooc.restful"></context:component-scan>
+    <!--啟用Spring MVC的註解開發模式-->
+    <mvc:annotation-driven>
+        <!--
+            設置message-converters
+            可以設定respond的encoding問題
+        -->
+        <mvc:message-converters>
+            <!--設定對StringMessage的轉換器-->
+            <bean class="org.springframework.http.converter.StringHttpMessageConverter">
+                <!--supportedMediaTypes為一個list集合-->
+                <property name="supportedMediaTypes">
+                    <!--加入list元素-->
+                    <list>
+                        <!--設定html的response的charset-->
+                        <value>text/html;charset=utf-8</value>
+                        <!--設定json的response的charset-->
+                        <value>application/json;charset=utf-8</value>
+                    </list>
+                </property>
+            </bean>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
+    <!--將圖片、JS、CSS等靜態資源排除在攔截器外，可以提高執行效率-->
+    <mvc:default-servlet-handler></mvc:default-servlet-handler>
+</beans>
