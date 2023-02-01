@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>RESTful實驗室</title>
+    <!--導入JQuery依賴-->
+    <script src="resource/js/jquery-3.6.3.min.js"></script>
+    <!--在頁面加載時，註冊function-->
+    <script>
+        <!--宣告一個函數-->
+        $(function (){
+            <!--註冊btnGet按鈕被按下的function-->
+            $("#btnGet").click(function (){
+                <!--透過AJex向伺服器請求資料-->
+                $.ajax({
+                    <!--請求的url地址-->
+                    url: "/restful/request",
+                    <!--使用Get方法-->
+                    type: "get",
+                    <!--指定response回傳回來的資料類型(若為json則JQuery會自動將字串解析為json)-->
+                    dataType: "json",
+                    <!--如果資料成功獲取的callback-->
+                    success: function (json){ //參數為被解析的json
+                        <!--將伺服器回傳的結果更新到id為message的h1標籤中-->
+                        $("#message").text(json.message); //將json中message屬性對應的值填入
+                    }
+                })
+            })
+        })
+        $(function (){
+            <!--註冊btnGet按鈕被按下的function-->
+            $("#btnPost").click(function (){
+                <!--透過AJex向伺服器請求資料-->
+                $.ajax({
+                    <!--請求的url地址-->
+                    url: "/restful/request/100",
+                    <!--使用Get方法-->
+                    type: "post",
+                    data: "name=lily&age=23",
+                    <!--指定response回傳回來的資料類型(若為json則JQuery會自動將字串解析為json)-->
+                    dataType: "json",
+                    <!--如果資料成功獲取的callback-->
+                    success: function (json){ //參數為被解析的json
+                        <!--將伺服器回傳的結果更新到id為message的h1標籤中-->
+                        $("#message").text(json.message+":"+json.id); //將json中message屬性對應的值填入
+                    }
+                })
+            })
+        })
+        $(function (){
+            <!--註冊btnGet按鈕被按下的function-->
+            $("#btnPut").click(function (){
+                <!--透過AJex向伺服器請求資料-->
+                $.ajax({
+                    <!--請求的url地址-->
+                    url: "/restful/request",
+                    <!--使用Get方法-->
+                    type: "put",
+                    data: "name=lily&age=23",
+                    <!--指定response回傳回來的資料類型(若為json則JQuery會自動將字串解析為json)-->
+                    dataType: "json",
+                    <!--如果資料成功獲取的callback-->
+                    success: function (json){ //參數為被解析的json
+                        <!--將伺服器回傳的結果更新到id為message的h1標籤中-->
+                        $("#message").text(json.message); //將json中message屬性對應的值填入
+                    }
+                })
+            })
+        })
+        $(function (){
+            <!--註冊btnGet按鈕被按下的function-->
+            $("#btnDelete").click(function (){
+                <!--透過AJex向伺服器請求資料-->
+                $.ajax({
+                    <!--請求的url地址-->
+                    url: "/restful/request",
+                    <!--使用Get方法-->
+                    type: "delete",
+                    <!--指定response回傳回來的資料類型(若為json則JQuery會自動將字串解析為json)-->
+                    dataType: "json",
+                    <!--如果資料成功獲取的callback-->
+                    success: function (json){ //參數為被解析的json
+                        <!--將伺服器回傳的結果更新到id為message的h1標籤中-->
+                        $("#message").text(json.message); //將json中message屬性對應的值填入
+                    }
+                })
+            })
+        })
+
+        <!--使用ajax發出request並獲取JSON資料-->
+        $(function (){
+            $("#btnPersons").click(function (){
+                $.ajax({
+                    url:"/restful/persons",
+                    type: "get",
+                    dataType: "json",
+                    success: function (json){
+                        console.log(json);
+                        for(var i=0;i<json.length;i++){
+                            var p=json[i];
+                            $("#divPersons").append("<h2>"+p.name+"-"+p.age+"-"+p.birthday+"</h2>");
+                        }
+                    }
+                })
+            })
+        })
+    </script>
+</head>
+<body>
+    <input type="button" id="btnGet" value="發送Get請求">
+    <input type="button" id="btnPost" value="發送Post請求">
+    <input type="button" id="btnPut" value="發送Put請求">
+    <input type="button" id="btnDelete" value="發送Delete請求">
+    <!--等待ajex請求後，填入資料-->
+    <h1 id="message"></h1>
+    <hr/>
+    <input type="button" id="btnPersons" value="查詢所有人員">
+    <!--用來顯示JSON中的多個物件-->
+    <div id="divPersons"></div>
+</body>
+</html>

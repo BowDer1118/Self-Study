@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration>
+    <!--定義一個追加器-->
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <!--規定日誌輸出的格式-->
+        <encoder>
+            <pattern>[%thread] %d %level %logger{10} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!--利用RollingFileAppender以天輸出一份日誌文件-->
+    <appender name="accessHistoryLog"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!--日誌的執行策略:以時間為基礎-->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!--日誌保存位置，其中%d代表當日日期-->
+            <fileNamePattern>
+                c:/IdeaWorkspace/interceptor/logback-history/history-%d.log
+            </fileNamePattern>
+        </rollingPolicy>
+        <encoder>
+            <pattern>[%thread] %d %level %logger{10} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!--設定一個日誌最低輸出級別-->
+    <root level="debug">
+        <!--將輸出級別套用到日誌輸出器-->
+        <appender-ref ref="console"></appender-ref>
+    </root>
+    <!--
+        指定目標類，要採用的日誌規則
+        level:最低輸出等級
+        additivity:代表是否向其他的輸出位置輸出
+    -->
+    <logger name="com.imooc.restful.interceptor.AccessHistoryInterceptor"
+            level="INFO" additivity="false">
+        <appender-ref ref="accessHistoryLog"></appender-ref>
+    </logger>
+</configuration>

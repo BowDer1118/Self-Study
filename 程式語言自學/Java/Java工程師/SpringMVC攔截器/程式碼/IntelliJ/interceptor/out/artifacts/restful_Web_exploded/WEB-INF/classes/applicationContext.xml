@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mv="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+            http://www.springframework.org/schema/beans/spring-beans.xsd
+            http://www.springframework.org/schema/context
+            http://www.springframework.org/schema/context/spring-context.xsd
+            http://www.springframework.org/schema/mvc
+            http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+    <!--開啟IoC註解開發模式:自動掃描-->
+    <context:component-scan base-package="com.imooc.restful"></context:component-scan>
+    <!--啟用Spring MVC的註解開發模式-->
+    <mvc:annotation-driven>
+        <!--
+            設置message-converters
+            可以設定respond的encoding問題
+        -->
+        <mvc:message-converters>
+            <!--設定對StringMessage的轉換器-->
+            <bean class="org.springframework.http.converter.StringHttpMessageConverter">
+                <!--supportedMediaTypes為一個list集合-->
+                <property name="supportedMediaTypes">
+                    <!--加入list元素-->
+                    <list>
+                        <!--設定html的response的charset-->
+                        <value>text/html;charset=utf-8</value>
+                        <!--設定json的response的charset-->
+                        <value>application/json;charset=utf-8</value>
+                    </list>
+                </property>
+            </bean>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
+    <!--將圖片、JS、CSS等靜態資源排除在攔截器外，可以提高執行效率-->
+    <mvc:default-servlet-handler></mvc:default-servlet-handler>
+    <!--允許遠程特殊域名跨域訪問當前伺服器所管理的特定網址-->
+    <mvc:cors>
+        <!--
+            當遠程域名訪問到/restful下的所有網址都會被當前規則管理
+            allowed-origins:被允許的遠程域名
+            max-age:預檢緩存時間
+        -->
+        <mvc:mapping path="/restful/**" allowed-origins="http://localhost:8080,http://www.imooc.com" max-age="3600"/>
+    </mvc:cors>
+
+    <!--設定攔截器-->
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <!--要攔截的網址-->
+            <mvc:mapping path="/restful/**"/>
+            <!--排除靜態資源-->
+<!--            <mvc:exclude-mapping path="/**.ico"/>-->
+<!--            <mvc:exclude-mapping path="/**.jpg"/>-->
+<!--            <mvc:exclude-mapping path="/**.gif"/>-->
+<!--            <mvc:exclude-mapping path="/**.js"/>-->
+            <!--將靜態資源統一整理到resource資料夾並排除-->
+            <mvc:exclude-mapping path="/resource/**"/>
+            <!--指定要使用的攔截器類-->
+            <bean class="com.imooc.restful.interceptor.MyInterceptor"></bean>
+        </mvc:interceptor>
+    </mvc:interceptors>
+<!--    <mvc:interceptors>-->
+<!--        <mvc:interceptor>-->
+<!--            &lt;!&ndash;要攔截的網址&ndash;&gt;-->
+<!--            <mvc:mapping path="/**"/>-->
+<!--            &lt;!&ndash;排除靜態資源&ndash;&gt;-->
+<!--            &lt;!&ndash;            <mvc:exclude-mapping path="/**.ico"/>&ndash;&gt;-->
+<!--            &lt;!&ndash;            <mvc:exclude-mapping path="/**.jpg"/>&ndash;&gt;-->
+<!--            &lt;!&ndash;            <mvc:exclude-mapping path="/**.gif"/>&ndash;&gt;-->
+<!--            &lt;!&ndash;            <mvc:exclude-mapping path="/**.js"/>&ndash;&gt;-->
+<!--            &lt;!&ndash;將靜態資源統一整理到resource資料夾並排除&ndash;&gt;-->
+<!--            <mvc:exclude-mapping path="/resource/**"/>-->
+<!--            &lt;!&ndash;指定要使用的攔截器類&ndash;&gt;-->
+<!--            <bean class="com.imooc.restful.interceptor.MyInterceptor1"></bean>-->
+<!--        </mvc:interceptor>-->
+<!--    </mvc:interceptors>-->
+    <!--添加攔截器-->
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/**"/>
+            <mvc:exclude-mapping path="/resource/**"/>
+            <bean class="com.imooc.restful.interceptor.AccessHistoryInterceptor"></bean>
+        </mvc:interceptor>
+    </mvc:interceptors>
+</beans>

@@ -1,0 +1,5 @@
+[http-nio-8080-exec-1] 2023-02-01 12:52:28,821 INFO c.i.r.i.AccessHistoryInterceptor - 127.0.0.1|http://localhost:8080/|IntelliJ IDEA/223.8214.52
+[http-nio-8080-exec-2] 2023-02-01 12:52:28,831 INFO c.i.r.i.AccessHistoryInterceptor - 127.0.0.1|http://localhost:8080/|IntelliJ IDEA/223.8214.52
+[http-nio-8080-exec-4] 2023-02-01 12:52:28,897 INFO c.i.r.i.AccessHistoryInterceptor - 0:0:0:0:0:0:0:1|http://localhost:8080/|Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36
+[http-nio-8080-exec-5] 2023-02-01 12:52:32,911 INFO c.i.r.i.AccessHistoryInterceptor - 0:0:0:0:0:0:0:1|http://localhost:8080/restful/request|Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36
+[http-nio-8080-exec-6] 2023-02-01 12:52:33,708 INFO c.i.r.i.AccessHistoryInterceptor - 0:0:0:0:0:0:0:1|http://localhost:8080/restful/persons|Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36
