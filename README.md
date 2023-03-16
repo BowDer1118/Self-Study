@@ -1,5 +1,5 @@
 # Self-Study
- This repository help me to record different programming language features.
+ This repository help me to record different programming language features and skills.
 
 ### Category
 1. 程式語言自學: Include C++ and Java Language self-learning notes.
